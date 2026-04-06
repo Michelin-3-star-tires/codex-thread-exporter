@@ -158,20 +158,22 @@ def test_render_and_export(tmp_path: Path) -> None:
     markdown = render_markdown(
         transcript,
         ExportOptions(
+            document_title="我在2025年写完的一篇论文",
             timezone_mode="beijing",
             metadata_profile="basic",
             include_raw_events=False,
             output_dir=str(tmp_path / "output"),
         ),
     )
-    assert "线程元信息" not in markdown
-    assert "测试线程" in markdown
+    assert markdown.startswith("# 我在2025年写完的一篇论文")
+    assert "对话消息" not in markdown
     assert "内部说明" not in markdown
     assert "处理中" not in markdown
     assert "收到" in markdown
     path = export_transcript(
         transcript,
         ExportOptions(
+            document_title="我在2025年写完的一篇论文",
             timezone_mode="beijing",
             metadata_profile="basic",
             include_raw_events=False,
@@ -179,4 +181,4 @@ def test_render_and_export(tmp_path: Path) -> None:
         ),
     )
     assert path.exists()
-    assert path.read_text(encoding="utf-8").startswith("# 线程导出")
+    assert path.read_text(encoding="utf-8").startswith("# 我在2025年写完的一篇论文")

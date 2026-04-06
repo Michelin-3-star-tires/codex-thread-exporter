@@ -74,21 +74,17 @@ def _build_output_path(transcript: Transcript, output_dir: Path) -> Path:
 
 
 def render_markdown(transcript: Transcript, options: ExportOptions) -> str:
-    thread = transcript.thread
     timezone_mode = options.timezone_mode
     lines: list[str] = []
 
-    lines.append(f"# 线程导出：{thread.title or thread.id}")
+    lines.append(f"# {options.document_title.strip() or transcript.thread.title or transcript.thread.id}")
     lines.append("")
-    lines.append("## 对话消息")
 
     if transcript.messages:
-        lines.append("")
         for msg in transcript.messages:
             lines.extend(_render_message_block(msg, timezone_mode))
             lines.append("")
     else:
-        lines.append("")
         lines.append("_未找到消息记录。_")
 
     if options.include_raw_events:
@@ -123,9 +119,9 @@ def _render_message_block(msg: MessageRecord, timezone_mode: str) -> list[str]:
 
 def _message_heading(role: str) -> tuple[str, str]:
     if role == "assistant":
-        return "◀ 助手回复", "###"
+        return "🤖 助手回复", "####"
     if role == "user":
-        return "▶ 用户消息", "####"
+        return "👤 用户消息", "###"
     return f"◆ {role}消息", "####"
 
 

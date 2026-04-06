@@ -131,6 +131,7 @@ def main() -> None:
             path = export_transcript(
                 transcript,
                 ExportOptions(
+                    document_title=keyword,
                     timezone_mode="beijing",
                     metadata_profile=metadata_profile,
                     include_raw_events=include_raw_events,

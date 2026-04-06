@@ -52,6 +52,7 @@ class Transcript:
 
 @dataclass(slots=True)
 class ExportOptions:
+    document_title: str
     timezone_mode: str
     metadata_profile: str
     include_raw_events: bool
