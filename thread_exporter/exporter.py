@@ -13,6 +13,8 @@ except ImportError:  # pragma: no cover - Python 3.8 及更早版本才会走到
 from .models import ExportOptions, MessageRecord, Transcript
 
 
+EXPORT_VARIANT = "readable"
+
 if ZoneInfo is None:
     BEIJING_TZ = timezone(timedelta(hours=8), name="UTC+08")
 else:
@@ -60,7 +62,14 @@ def _choose_fence(text: str) -> str:
 def _build_output_path(transcript: Transcript, output_dir: Path) -> Path:
     dt = datetime.fromtimestamp(transcript.thread.created_at, tz=timezone.utc).astimezone(BEIJING_TZ)
     date_folder = f"{dt:%Y%m%d}"
-    file_name = f"{dt:%H%M%S}_{_slugify(transcript.thread.id, 'thread')}.md"
+    thread_name = transcript.thread.title.strip() or transcript.thread.first_user_message.strip()
+    if not thread_name:
+        thread_name = transcript.thread.id
+    file_name = (
+        f"{dt:%H%M%S}_"
+        f"{_slugify(thread_name, 'thread')}_"
+        f"{_slugify(transcript.thread.id, 'thread')}.md"
+    )
     return output_dir / date_folder / file_name
 
 
@@ -100,7 +109,8 @@ def render_markdown(transcript: Transcript, options: ExportOptions) -> str:
 
 
 def _render_message_block(msg: MessageRecord, timezone_mode: str) -> list[str]:
-    header = f"### {msg.index}. {_format_timestamp(msg.timestamp, timezone_mode)} | {msg.role}"
+    role_label, heading = _message_heading(msg.role)
+    header = f"{heading} {role_label} · {msg.index} · {_format_timestamp(msg.timestamp, timezone_mode)}"
     body = msg.text or ""
     fence = _choose_fence(body)
     return [
@@ -109,6 +119,14 @@ def _render_message_block(msg: MessageRecord, timezone_mode: str) -> list[str]:
         body,
         fence,
     ]
+
+
+def _message_heading(role: str) -> tuple[str, str]:
+    if role == "assistant":
+        return "◀ 助手回复", "###"
+    if role == "user":
+        return "▶ 用户消息", "####"
+    return f"◆ {role}消息", "####"
 
 
 def export_transcript(transcript: Transcript, options: ExportOptions) -> Path:

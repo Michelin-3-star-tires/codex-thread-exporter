@@ -42,5 +42,6 @@ uv run python -m thread_exporter
 - 时间格式：北京时间
 - 导出内容：仅保留对话正文
 - 角色处理：忽略 `developer`，连续 `assistant` 只保留最后一条
-- 文件名：`更新时间_线程ID.md`
+- 导出模式：默认阅读版，代码内预留完整版开关，但 CLI 不暴露
+- 文件名：`创建时间_标题或首句_slug_线程ID.md`
 - 导出目录：默认 `output/`
