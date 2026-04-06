@@ -35,11 +35,12 @@ uv run python run.py
 uv run python -m thread_exporter
 ```
 
-导出结果默认保存在 `output/YYYY/MM/DD/thread_id/` 目录下。
+导出结果默认保存在 `output/YYYYMMDD/` 目录下，文件名使用线程创建时间和 thread id。
 
 ## 建议的导出参数
 
 - 时间格式：北京时间
-- 元信息：基础信息 + 运行信息
-- 消息范围：仅导出消息正文
+- 导出内容：仅保留对话正文
+- 角色处理：忽略 `developer`，连续 `assistant` 只保留最后一条
 - 文件名：`更新时间_线程ID.md`
+- 导出目录：默认 `output/`

@@ -61,7 +61,31 @@ def _build_db(tmp_path: Path) -> Path:
                 ),
                 json.dumps(
                     {
+                        "timestamp": "2026-04-01T09:49:00.000Z",
+                        "type": "response_item",
+                        "payload": {
+                            "type": "message",
+                            "role": "developer",
+                            "content": [{"type": "input_text", "text": "内部说明"}],
+                        },
+                    },
+                    ensure_ascii=False,
+                ),
+                json.dumps(
+                    {
                         "timestamp": "2026-04-01T09:49:35.609Z",
+                        "type": "response_item",
+                        "payload": {
+                            "type": "message",
+                            "role": "assistant",
+                            "content": [{"type": "output_text", "text": "处理中"}],
+                        },
+                    },
+                    ensure_ascii=False,
+                ),
+                json.dumps(
+                    {
+                        "timestamp": "2026-04-01T09:49:40.609Z",
                         "type": "response_item",
                         "payload": {
                             "type": "message",
@@ -123,6 +147,7 @@ def test_search_and_load(tmp_path: Path) -> None:
     transcript = load_transcript(thread)
     assert len(transcript.messages) == 2
     assert transcript.messages[0].text == "你好"
+    assert transcript.messages[1].text == "收到"
 
 
 def test_render_and_export(tmp_path: Path) -> None:
@@ -139,8 +164,11 @@ def test_render_and_export(tmp_path: Path) -> None:
             output_dir=str(tmp_path / "output"),
         ),
     )
-    assert "线程元信息" in markdown
+    assert "线程元信息" not in markdown
     assert "测试线程" in markdown
+    assert "内部说明" not in markdown
+    assert "处理中" not in markdown
+    assert "收到" in markdown
     path = export_transcript(
         transcript,
         ExportOptions(

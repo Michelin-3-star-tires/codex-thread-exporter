@@ -97,11 +97,19 @@ def _extract_text(content: object) -> str:
     return str(content)
 
 
+def _append_message(messages: list[MessageRecord], record: MessageRecord) -> None:
+    if record.role == "developer":
+        return
+    if record.role == "assistant" and messages and messages[-1].role == "assistant":
+        messages[-1] = record
+        return
+    messages.append(record)
+
+
 def load_transcript(thread: ThreadRecord) -> Transcript:
     rollout_path = Path(thread.rollout_path)
     messages: list[MessageRecord] = []
     raw_event_count = 0
-    message_count = 0
 
     try:
         with rollout_path.open("r", encoding="utf-8") as f:
@@ -122,24 +130,27 @@ def load_transcript(thread: ThreadRecord) -> Transcript:
                 if payload.get("type") != "message":
                     continue
 
-                message_count += 1
-                messages.append(
+                _append_message(
+                    messages,
                     MessageRecord(
-                        index=message_count,
+                        index=0,
                         timestamp=str(event.get("timestamp", "")),
                         role=str(payload.get("role", "unknown")),
                         text=_extract_text(payload.get("content")),
                         raw_payload=payload,
-                    )
+                    ),
                 )
     except FileNotFoundError as exc:
         raise FileNotFoundError(f"找不到 rollout 文件：{rollout_path}") from exc
     except OSError as exc:
         raise OSError(f"读取 rollout 文件失败：{rollout_path}") from exc
 
+    for idx, message in enumerate(messages, 1):
+        message.index = idx
+
     return Transcript(
         thread=thread,
         messages=messages,
-        event_count=message_count,
+        event_count=len(messages),
         raw_event_count=raw_event_count,
     )

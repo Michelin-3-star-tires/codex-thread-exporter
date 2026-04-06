@@ -25,7 +25,7 @@ def _prompt_choice(text: str, choices: dict[str, str], default: str) -> str:
         mark = "（默认）" if key == default else ""
         print(f"  {key}. {label}{mark}")
     while True:
-        value = input("请选择: ").strip() or default
+        value = input(f"请选择 [直接回车默认 {default}]: ").strip() or default
         if value in choices:
             return value
         print("输入无效，请重新选择。")
@@ -43,26 +43,23 @@ def _show_matches(matches) -> None:
     print("\n匹配结果：")
     for i, thread in enumerate(matches, 1):
         preview = shorten(
-            thread.first_user_message.replace("\n", " "), width=72, placeholder="..."
+            thread.first_user_message.replace("\n", " "), width=56, placeholder="..."
         )
+        title = shorten(thread.title.replace("\n", " "), width=56, placeholder="...")
         updated = (
             datetime.fromtimestamp(thread.updated_at, tz=timezone.utc)
             .astimezone()
             .strftime("%Y-%m-%d %H:%M:%S")
         )
-        created = (
-            datetime.fromtimestamp(thread.created_at, tz=timezone.utc)
-            .astimezone()
-            .strftime("%Y-%m-%d %H:%M:%S")
-        )
-        print(
-            f"  {i}. 更新={updated} | 创建={created} | id={thread.id} | "
-            f"title={shorten(thread.title, width=40, placeholder='...')} | {preview}"
-        )
+        print(f"  {i}. id={thread.id}")
+        print(f"     更新：{updated}")
+        print(f"     标题：{title}")
+        print(f"     首句：{preview}")
+        print()
 
 
 def _parse_selection(raw: str, total: int) -> list[int]:
-    if raw.strip().lower() in {"all", "a", "全部"}:
+    if raw.strip().lower() in {"0", "all", "a", "全部"}:
         return list(range(1, total + 1))
     indexes: list[int] = []
     for part in raw.split(","):
@@ -82,13 +79,9 @@ def main() -> None:
     db_path = DEFAULT_DB
     if not Path(db_path).exists():
         db_path = _prompt("默认路径不存在，请手动输入 SQLite 路径")
-    keyword = _prompt("请输入 thread 前缀或关键词")
-    if not keyword:
-        print("未输入关键词，已退出。")
-        return
 
     field = _prompt_choice(
-        "请选择检索字段",
+        "请选择查找方式",
         {
             "1": "按首句原文找（默认）",
             "2": "按标题摘要找",
@@ -98,39 +91,37 @@ def main() -> None:
         "1",
     )
     field_map = {"1": "first_user_message", "2": "title", "3": "all", "4": "id"}
+    keyword_prompt_map = {
+        "1": "请输入首句原文开头",
+        "2": "请输入标题开头",
+        "3": "请输入要综合匹配的前缀",
+        "4": "请输入 thread id 前缀",
+    }
+    keyword = _prompt(keyword_prompt_map[field])
+    if not keyword:
+        print("未输入查找内容，已退出。")
+        return
+
     matches = search_threads(db_path, keyword, field_map[field], limit=20)
     if not matches:
         print("没有找到匹配的线程。")
         return
 
     _show_matches(matches)
-    selection = _prompt("请输入序号，支持逗号分隔；输入 all 表示全部导出", "1")
+    selection = _prompt("请输入序号（支持逗号分隔；0=全部；回车默认 1）", "1")
     try:
         indexes = _parse_selection(selection, len(matches))
     except ValueError as exc:
         print(f"选择失败：{exc}")
         return
 
-    timezone_mode = _prompt_choice(
-        "请选择时间显示方式",
-        {"1": "北京时间", "2": "UTC", "3": "北京时间 + UTC 双列"},
-        "1",
-    )
-    timezone_map = {"1": "beijing", "2": "utc", "3": "dual"}
+    metadata_profile = "all"
+    print("元信息级别：全部信息（推荐，默认）")
 
-    metadata_profile = _prompt_choice(
-        "请选择元信息级别",
-        {
-            "1": "基础信息",
-            "2": "运行信息",
-            "3": "全部信息（推荐）",
-        },
-        "3",
-    )
-    metadata_map = {"1": "basic", "2": "runtime", "3": "all"}
-
-    include_raw_events = _prompt_yes_no("是否附带原始消息 JSON", False)
-    output_dir = _prompt("请输入导出目录", DEFAULT_OUTPUT)
+    include_raw_events = False
+    print("是否附带原始消息 JSON：n（默认）")
+    print(f"导出目录：{DEFAULT_OUTPUT}（默认）")
+    output_dir = DEFAULT_OUTPUT
 
     selected = [matches[i - 1] for i in indexes]
     print(f"\n准备导出 {len(selected)} 个线程。")
@@ -140,8 +131,8 @@ def main() -> None:
             path = export_transcript(
                 transcript,
                 ExportOptions(
-                    timezone_mode=timezone_map[timezone_mode],
-                    metadata_profile=metadata_map[metadata_profile],
+                    timezone_mode="beijing",
+                    metadata_profile=metadata_profile,
                     include_raw_events=include_raw_events,
                     output_dir=output_dir,
                 ),
