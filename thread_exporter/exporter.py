@@ -119,9 +119,9 @@ def _render_message_block(msg: MessageRecord, timezone_mode: str) -> list[str]:
 
 def _message_heading(role: str) -> tuple[str, str]:
     if role == "assistant":
-        return "🤖 助手回复", "####"
+        return "🟠 助手回复", "####"
     if role == "user":
-        return "👤 用户消息", "###"
+        return "🔵 用户消息", "###"
     return f"◆ {role}消息", "####"
 
 
