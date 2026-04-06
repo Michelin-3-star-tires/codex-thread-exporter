@@ -22,7 +22,7 @@ def _prompt(text: str, default: str | None = None) -> str:
 def _prompt_choice(text: str, choices: dict[str, str], default: str) -> str:
     print(text)
     for key, label in choices.items():
-        mark = "（默认）" if key == default else ""
+        mark = "（默认）" if key == default and "默认" not in label else ""
         print(f"  {key}. {label}{mark}")
     while True:
         value = input(f"请选择 [直接回车默认 {default}]: ").strip() or default
@@ -75,7 +75,7 @@ def _parse_selection(raw: str, total: int) -> list[int]:
 
 
 def main() -> None:
-    print("线程查询导出器")
+    print("Codex对话查询导出工具")
     db_path = DEFAULT_DB
     if not Path(db_path).exists():
         db_path = _prompt("默认路径不存在，请手动输入 SQLite 路径")

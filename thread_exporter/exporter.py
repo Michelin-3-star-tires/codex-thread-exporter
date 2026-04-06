@@ -60,9 +60,13 @@ def _choose_fence(text: str) -> str:
 
 
 def _build_output_path(transcript: Transcript, output_dir: Path) -> Path:
-    dt = datetime.fromtimestamp(transcript.thread.created_at, tz=timezone.utc).astimezone(BEIJING_TZ)
+    dt = datetime.fromtimestamp(
+        transcript.thread.created_at, tz=timezone.utc
+    ).astimezone(BEIJING_TZ)
     date_folder = f"{dt:%Y%m%d}"
-    thread_name = transcript.thread.title.strip() or transcript.thread.first_user_message.strip()
+    thread_name = (
+        transcript.thread.title.strip() or transcript.thread.first_user_message.strip()
+    )
     if not thread_name:
         thread_name = transcript.thread.id
     file_name = (
@@ -77,7 +81,9 @@ def render_markdown(transcript: Transcript, options: ExportOptions) -> str:
     timezone_mode = options.timezone_mode
     lines: list[str] = []
 
-    lines.append(f"# {options.document_title.strip() or transcript.thread.title or transcript.thread.id}")
+    lines.append(
+        f"# {options.document_title.strip() or transcript.thread.title or transcript.thread.id}"
+    )
     lines.append("")
 
     if transcript.messages:
