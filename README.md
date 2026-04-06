@@ -44,6 +44,6 @@ uv run python -m thread_exporter
 - 导出内容：仅保留对话正文
 - 角色处理：忽略 `developer`，连续 `assistant` 只保留最后一条
 - 导出模式：默认阅读版，代码内预留完整版开关，但 CLI 不暴露
-- 角色样式：`👤 User提问`、`🤖 AI回答`
+- 角色样式：`🔵 User提问`、`🟠 AI回答`
 - 文件名：`创建时间_标题或首句_slug_线程ID.md`
 - 导出目录：默认 `output/`
