@@ -13,14 +13,3 @@ case "$first_line" in
     ;;
 esac
 
-subject=${first_line#*: }
-case "$subject" in
-  *[![:space:][:ascii:]]*)
-    :
-    ;;
-  *)
-    echo "提交主题建议使用中文，且不能为空" >&2
-    exit 1
-    ;;
-esac
-

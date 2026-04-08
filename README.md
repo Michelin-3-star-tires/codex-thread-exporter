@@ -1,13 +1,21 @@
-# Codex对话查询导出工具
+# Codex 对话查询导出工具
 
-这是一个用于查询 `C:\Users\86274\.codex\state_5.sqlite` 中 Codex 线程记录，并将选中的线程导出为 Markdown 的小工具。
+> English: Query local Codex thread records and export selected conversations to Markdown.
+
+这是一个用于查询本地 Codex 线程数据库，并将选中的线程导出为 Markdown 的小工具。
 
 ## 项目简介
 
 - 支持按线程 ID 前缀、标题前缀、首条用户消息前缀进行检索
 - 支持在多个匹配结果里选择一个或全部导出
 - 导出的 Markdown 仅保留对话正文
-- 适合把某个完整对话整理成可阅读、可归档的文档
+- 适合把完整对话整理成可阅读、可归档的文档
+
+## 在线状态
+
+- 当前主分支已接入基础 CI
+- 已提供 pytest 测试
+- 已支持命令行入口 `thread-exporter`
 
 ## 环境要求
 
@@ -15,11 +23,11 @@
 - `uv`
 - 本地可访问目标 SQLite 文件
 
-## 安装步骤
+## 快速开始
 
-1. 进入项目目录
-2. 如果需要测试，执行 `uv add --dev pytest`
-3. 同步环境：`uv sync`
+1. 克隆仓库
+2. 执行 `uv sync`
+3. 运行 `uv run pytest` 确认环境正常
 
 ## 运行方式
 
@@ -29,21 +37,47 @@
 uv run python run.py
 ```
 
-或者：
+或者直接使用命令：
 
 ```powershell
-uv run python -m thread_exporter
+uv run thread-exporter
 ```
 
-导出结果默认保存在 `output/YYYYMMDD/` 目录下，文件名使用线程创建时间和 thread id。
+如需显式指定数据库路径和导出目录：
 
-## 建议的导出参数
+```powershell
+uv run thread-exporter --db-path "D:\path\to\state_5.sqlite" --output-dir output
+```
 
-- 时间格式：北京时间
-- 一级标题：使用本次查询输入内容
-- 导出内容：仅保留对话正文
-- 角色处理：忽略 `developer`，连续 `assistant` 只保留最后一条
-- 导出模式：默认阅读版，代码内预留完整版开关，但 CLI 不暴露
-- 角色样式：`🔵 User提问`、`🟠 AI回答`
-- 文件名：`创建时间_标题或首句_slug_线程ID.md`
-- 导出目录：默认 `output/`
+## 配置说明
+
+程序会按以下顺序寻找数据库：
+
+1. 命令行参数 `--db-path`
+2. 环境变量 `CODEX_STATE_DB`
+3. `~/.codex/state_5.sqlite`
+
+如果以上路径都不可用，程序会提示你手动输入路径。
+
+## 导出结果
+
+- 默认输出目录为 `output/`
+- 按日期分层保存到 `output/YYYYMMDD/`
+- 文件名格式为 `创建时间_标题或首句_slug_线程ID.md`
+- 默认导出阅读版，仅保留对话正文
+
+## 项目结构
+
+- `thread_exporter/cli.py`：交互式流程与命令行入口
+- `thread_exporter/db.py`：SQLite 读取和线程解析
+- `thread_exporter/exporter.py`：Markdown 生成与落盘
+- `tests/`：核心逻辑测试
+- `docs/`：项目规划与修改记录
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request。开始贡献前，建议先阅读 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
+
+## 许可证
+
+本项目使用 MIT 许可证，详见 [`LICENSE`](LICENSE)。

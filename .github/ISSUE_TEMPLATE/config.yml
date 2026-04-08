@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 仓库说明
+    url: ../README.md
+    about: 提交 Issue 前建议先阅读 README，确认用法和常见配置。

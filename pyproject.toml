@@ -5,6 +5,13 @@ description = "交互式查询 Codex 线程并导出 Markdown"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
+license = { text = "MIT" }
+authors = [
+    { name = "Codex Contributors" },
+]
+
+[project.scripts]
+thread-exporter = "thread_exporter.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8.4.0"]

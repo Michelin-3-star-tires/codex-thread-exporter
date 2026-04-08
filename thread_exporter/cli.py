@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from textwrap import shorten
@@ -9,7 +11,7 @@ from .exporter import export_transcript
 from .models import ExportOptions
 
 
-DEFAULT_DB = r"C:\Users\86274\.codex\state_5.sqlite"
+DEFAULT_DB = Path.home() / ".codex" / "state_5.sqlite"
 DEFAULT_OUTPUT = "output"
 
 
@@ -37,6 +39,27 @@ def _prompt_yes_no(text: str, default: bool = False) -> bool:
     if not value:
         return default
     return value in {"y", "yes", "是", "1"}
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Codex 对话查询导出工具")
+    parser.add_argument(
+        "--db-path",
+        help="Codex 线程数据库路径；不传则优先读取环境变量 CODEX_STATE_DB，再回退到 ~/.codex/state_5.sqlite",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=DEFAULT_OUTPUT,
+        help="导出目录，默认 output",
+    )
+    return parser.parse_args()
+
+
+def _resolve_db_path(explicit_path: str | None) -> str:
+    candidate = explicit_path or os.getenv("CODEX_STATE_DB") or str(DEFAULT_DB)
+    if Path(candidate).exists():
+        return candidate
+    return _prompt("默认路径不存在，请手动输入 SQLite 路径", candidate)
 
 
 def _show_matches(matches) -> None:
@@ -75,10 +98,9 @@ def _parse_selection(raw: str, total: int) -> list[int]:
 
 
 def main() -> None:
+    args = _parse_args()
     print("Codex对话查询导出工具")
-    db_path = DEFAULT_DB
-    if not Path(db_path).exists():
-        db_path = _prompt("默认路径不存在，请手动输入 SQLite 路径")
+    db_path = _resolve_db_path(args.db_path)
 
     field = _prompt_choice(
         "请选择查找方式",
@@ -120,8 +142,8 @@ def main() -> None:
 
     include_raw_events = False
     print("是否附带原始消息 JSON：n（默认）")
-    print(f"导出目录：{DEFAULT_OUTPUT}（默认）")
-    output_dir = DEFAULT_OUTPUT
+    print(f"导出目录：{args.output_dir}（默认）")
+    output_dir = args.output_dir
 
     selected = [matches[i - 1] for i in indexes]
     print(f"\n准备导出 {len(selected)} 个线程。")
