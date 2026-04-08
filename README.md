@@ -74,6 +74,7 @@ uv run thread-exporter --db-path "D:\path\to\state_5.sqlite" --output-dir output
 - `tests/`：核心逻辑测试
 - `CONTRIBUTING.md`：贡献流程、测试命令和提交规范
 - `CODE_OF_CONDUCT.md`：社区行为准则
+- `RELEASE_NOTES.md`：版本发布说明
 - `.github/`：CI、Issue 模板和 PR 模板
 
 ## 贡献
