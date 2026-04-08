@@ -11,7 +11,7 @@
 - 导出的 Markdown 仅保留对话正文
 - 适合把完整对话整理成可阅读、可归档的文档
 
-## 在线状态
+## 项目状态
 
 - 当前主分支已接入基础 CI
 - 已提供 pytest 测试
@@ -72,7 +72,9 @@ uv run thread-exporter --db-path "D:\path\to\state_5.sqlite" --output-dir output
 - `thread_exporter/db.py`：SQLite 读取和线程解析
 - `thread_exporter/exporter.py`：Markdown 生成与落盘
 - `tests/`：核心逻辑测试
-- `docs/`：项目规划与修改记录
+- `CONTRIBUTING.md`：贡献流程、测试命令和提交规范
+- `CODE_OF_CONDUCT.md`：社区行为准则
+- `.github/`：CI、Issue 模板和 PR 模板
 
 ## 贡献
 
