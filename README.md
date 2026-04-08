@@ -2,20 +2,14 @@
 
 > English: Query local Codex thread records and export selected conversations to Markdown.
 
-这是一个用于查询本地 Codex 线程数据库，并将选中的线程导出为 Markdown 的小工具。
+这是一个用于查询本地 Codex 线程数据库，并将选中的线程导出为 Markdown 的工具。
 
 ## 项目简介
 
-- 支持按线程 ID 前缀、标题前缀、首条用户消息前缀进行检索
-- 支持在多个匹配结果里选择一个或全部导出
-- 导出的 Markdown 仅保留对话正文
+- 支持按线程 ID、标题、首条用户消息前缀进行检索
+- 支持在多个匹配结果里选择单个导出或全部导出
+- 导出的 Markdown 默认只保留对话正文
 - 适合把完整对话整理成可阅读、可归档的文档
-
-## 项目状态
-
-- 当前主分支已接入基础 CI
-- 已提供 pytest 测试
-- 已支持命令行入口 `thread-exporter`
 
 ## 环境要求
 
@@ -28,7 +22,7 @@
 1. 克隆仓库
 2. 执行 `uv sync`
 
-## 快速开始
+## 运行
 
 1. 执行 `uv run pytest` 确认环境正常
 2. 按需启动 `uv run thread-exporter`
