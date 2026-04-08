@@ -23,11 +23,15 @@
 - `uv`
 - 本地可访问目标 SQLite 文件
 
-## 快速开始
+## 安装
 
 1. 克隆仓库
 2. 执行 `uv sync`
-3. 运行 `uv run pytest` 确认环境正常
+
+## 快速开始
+
+1. 执行 `uv run pytest` 确认环境正常
+2. 按需启动 `uv run thread-exporter`
 
 ## 运行方式
 
