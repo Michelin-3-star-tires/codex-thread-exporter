@@ -78,6 +78,10 @@ uv run thread-exporter --db-path "D:\path\to\state_5.sqlite" --output-dir output
 
 欢迎提交 Issue 和 Pull Request。开始贡献前，建议先阅读 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
+## 社区准则
+
+参与协作前，请先阅读 [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)。
+
 ## 许可证
 
 本项目使用 MIT 许可证，详见 [`LICENSE`](LICENSE)。
