@@ -45,7 +45,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Codex 对话查询导出工具")
     parser.add_argument(
         "--db-path",
-        help="Codex 线程数据库路径；不传则优先读取环境变量 CODEX_STATE_DB，再回退到 ~/.codex/state_5.sqlite",
+        help="Codex 对话数据库路径；不传则优先读取环境变量 CODEX_STATE_DB，再回退到 ~/.codex/state_5.sqlite",
     )
     parser.add_argument(
         "--output-dir",
@@ -105,19 +105,19 @@ def main() -> None:
     field = _prompt_choice(
         "请选择查找方式",
         {
-            "1": "按首句原文找（默认）",
+            "1": "按首条消息找（默认）",
             "2": "按标题摘要找",
             "3": "综合查找",
-            "4": "按 thread id 找",
+            "4": "按对话 ID 找",
         },
         "1",
     )
     field_map = {"1": "first_user_message", "2": "title", "3": "all", "4": "id"}
     keyword_prompt_map = {
-        "1": "请输入首句原文开头",
+        "1": "请输入首条消息开头",
         "2": "请输入标题开头",
         "3": "请输入要综合匹配的前缀",
-        "4": "请输入 thread id 前缀",
+        "4": "请输入对话 ID 前缀",
     }
     keyword = _prompt(keyword_prompt_map[field])
     if not keyword:
@@ -126,7 +126,7 @@ def main() -> None:
 
     matches = search_threads(db_path, keyword, field_map[field], limit=20)
     if not matches:
-        print("没有找到匹配的线程。")
+        print("没有找到匹配的对话。")
         return
 
     _show_matches(matches)
@@ -146,7 +146,7 @@ def main() -> None:
     output_dir = args.output_dir
 
     selected = [matches[i - 1] for i in indexes]
-    print(f"\n准备导出 {len(selected)} 个线程。")
+    print(f"\n准备导出 {len(selected)} 个对话。")
     for thread in selected:
         try:
             transcript = load_transcript(thread)

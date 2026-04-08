@@ -2,11 +2,11 @@
 
 > English: Query local Codex thread records and export selected conversations to Markdown.
 
-这是一个用于查询本地 Codex 线程数据库，并将选中的线程导出为 Markdown 的工具。
+这是一个用于查询本地 Codex 对话数据库，并将选中的对话导出为 Markdown 的工具。
 
 ## 项目简介
 
-- 支持按线程 ID、标题、首条用户消息前缀进行检索
+- 支持按对话 ID、标题、首条用户消息前缀进行检索
 - 支持在多个匹配结果里选择单个导出或全部导出
 - 导出的 Markdown 默认只保留对话正文
 - 适合把完整对话整理成可阅读、可归档的文档
@@ -61,13 +61,13 @@ uv run thread-exporter --db-path "D:\path\to\state_5.sqlite" --output-dir output
 
 - 默认输出目录为 `output/`
 - 按日期分层保存到 `output/YYYYMMDD/`
-- 文件名格式为 `创建时间_标题或首句_slug_线程ID.md`
+- 文件名格式为 `创建时间_标题或首句_slug_对话ID.md`
 - 默认导出阅读版，仅保留对话正文
 
 ## 项目结构
 
 - `thread_exporter/cli.py`：交互式流程与命令行入口
-- `thread_exporter/db.py`：SQLite 读取和线程解析
+- `thread_exporter/db.py`：SQLite 读取和对话解析
 - `thread_exporter/exporter.py`：Markdown 生成与落盘
 - `tests/`：核心逻辑测试
 - `CONTRIBUTING.md`：贡献流程、测试命令和提交规范

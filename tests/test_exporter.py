@@ -113,7 +113,7 @@ def _build_db(tmp_path: Path) -> Path:
             "vscode",
             "openai",
             str(tmp_path),
-            "测试线程",
+            "测试对话",
             "{}",
             "never",
             10,
